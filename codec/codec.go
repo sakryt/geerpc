@@ -20,7 +20,7 @@ type Codec interface {
 
 type NewCodecFunc func(io.ReadWriteCloser) Codec
 
-// 给string类型起了个别名Type
+// Type 给string类型起了个别名Type
 type Type string
 
 const (
