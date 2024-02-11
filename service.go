@@ -1,4 +1,4 @@
-package service
+package geerpc
 
 import (
 	"go/ast"
@@ -86,4 +86,14 @@ func (s *service) registerMethods() {
 
 func isExportedOrBuiltinType(t reflect.Type) bool {
 	return ast.IsExported(t.Name()) || t.PkgPath() == ""
+}
+
+func (s *service) call(m *methodType, argv, replyv reflect.Value) error {
+	atomic.AddUint64(&m.numCalls, 1)
+	f := m.method.Func
+	returnValues := f.Call([]reflect.Value{s.rcvr, argv, replyv})
+	if errInter := returnValues[0].Interface(); errInter != nil {
+		return errInter.(error)
+	}
+	return nil
 }
